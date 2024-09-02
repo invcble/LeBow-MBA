@@ -6,8 +6,9 @@ pd.set_option('future.no_silent_downcasting', True)
 file_path = 'dummy_data_value.xlsx'
 df = pd.read_excel(file_path, header=0)
 
-data_dict_path = 'data-dictionary.xlsx'
-data_dict_df = pd.read_excel(data_dict_path, header=0)
+data_dict_path = 'Database_Map.xlsx'
+data_dict_df = pd.read_excel(data_dict_path, sheet_name='Map', header=0)
+database_df = pd.read_excel(data_dict_path, sheet_name='Database', header=0)
 
 df = df[df['Finished'] == 1].reset_index(drop=True)
 
@@ -112,3 +113,39 @@ df = df.drop(columns=columns_to_drop)
 df = pd.merge(df, mba_ntwk, on='Email', how='left').sort_index()
 df = df[['Name'] + [col for col in df.columns if col != 'Name']]
 print(df)
+
+
+################## AVERAGE ##################
+
+exclude_columns = ['Name', 'MBA program', 'Email', 'Academic years', 'Academic term', 'DOB', 'Gender', 'Profession', 'Work Ex. years']
+numeric_df = df.apply(pd.to_numeric, errors='coerce')
+term_average_dict = numeric_df.drop(columns=exclude_columns, errors='ignore').mean().round(2).to_dict()
+term_average_dict['Weak'] =  round(term_average_dict['Weak'])
+term_average_dict['Strong'] =  round(term_average_dict['Strong'])
+term_average_dict['Total_Size'] =  round(term_average_dict['Total_Size'])
+term_average_dict['PS'] =  round((term_average_dict['NA1'] + term_average_dict['II'] + term_average_dict['SA'] + term_average_dict['AS'])/4, 2)
+term_average_dict['EmpL'] =  round((term_average_dict['LBE'] + term_average_dict['PDM'] + term_average_dict['COACH'] + term_average_dict['INF'] + term_average_dict['ShowCon'])/5, 2)
+term_average_dict['PE'] =  round((term_average_dict['MEAN'] + term_average_dict['COMP'] + term_average_dict['SD'] + term_average_dict['IMP'])/4, 2)
+
+
+print(term_average_dict)
+new_term = 'Fall 55'
+
+# Update the 'Fall 25' column with values from average_dict based on the 'Code' column
+database_df[new_term] = database_df['Code'].map(term_average_dict)
+
+# Recalculate the 'MBA Average' column, now including 'Fall 25'
+terms = ['Fall 21', 'Fall 22', 'Fall 23', 'Spring 22', 'Winter 23', 'Spring 23', 'Spring 24', 'Fall 55']
+# terms= terms.append(new_term)
+database_df['MBA Average'] = database_df[terms].mean(axis=1, skipna= True).round(2)
+
+# Round 'MBA Average' to integers for specific 'Code' values
+codes_to_round = ['Total_Size', 'Strong', 'Weak']
+database_df.loc[database_df['Code'].isin(codes_to_round), 'MBA Average'] = (
+    database_df.loc[database_df['Code'].isin(codes_to_round), 'MBA Average'].round(0).astype(int)
+)
+# Save the updated DataFrame back to the Excel file
+with pd.ExcelWriter(data_dict_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+    database_df.to_excel(writer, sheet_name='Database', index=False)
+
+# automate column handling, pull updated MBA_average
