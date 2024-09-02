@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+pd.set_option('future.no_silent_downcasting', True)
+
 file_path = 'dummy_data_value.xlsx'
 df = pd.read_excel(file_path, header=0)
 
@@ -114,9 +116,8 @@ print(df.columns)
 
 
 # Extract Email and Q23 related data
-mba_ntwk = df[['Email'] + [col for sublist in network_categories.values() for col in sublist if col in df.columns]]
+mba_ntwk = df[['Email'] + [col for sublist in network_categories.values() for col in sublist if col in df.columns]].copy()
 
-# Function to calculate means for a given dimension
 def calculate_network_means(df, columns, divisor_value):
     df_filtered = df[columns].copy()
     net_size = df_filtered.notna().sum(axis=1)
@@ -125,55 +126,60 @@ def calculate_network_means(df, columns, divisor_value):
     return category_count / net_size
 
 # Combine results into a DataFrame
-net_breadth = mba_ntwk[['Email']].copy()
+# mba_ntwk = mba_ntwk[['Email']].copy()
 
 # Corrected calculation for individual Cross-Functional (CF), External Contacts (EC), Higher Levels (HLC) averages
-net_breadth['Cross_Func'] = calculate_network_means(mba_ntwk, network_categories['N2'], 2)
-net_breadth['Ext'] = calculate_network_means(mba_ntwk, network_categories['N3'], 2)
-net_breadth['High_Lvl'] = calculate_network_means(mba_ntwk, network_categories['N4'], 3)
+mba_ntwk['Cross_Func'] = calculate_network_means(mba_ntwk, network_categories['N2'], 2)
+mba_ntwk['Ext'] = calculate_network_means(mba_ntwk, network_categories['N3'], 2)
+mba_ntwk['High_Lvl'] = calculate_network_means(mba_ntwk, network_categories['N4'], 3)
 
 # Calculate overall means for CF, EC, and HLC
-cf_mean = net_breadth['Cross_Func'].mean(skipna=True)
-ec_mean = net_breadth['Ext'].mean(skipna=True)
-hlc_mean = net_breadth['High_Lvl'].mean(skipna=True)
+cf_mean = mba_ntwk['Cross_Func'].mean(skipna=True)
+ec_mean = mba_ntwk['Ext'].mean(skipna=True)
+hlc_mean = mba_ntwk['High_Lvl'].mean(skipna=True)
 
 # Add average row
-average_row = pd.Series(['Average', cf_mean, ec_mean, hlc_mean], index=net_breadth.columns)
-net_breadth = pd.concat([net_breadth, average_row.to_frame().T], ignore_index=True)
+# average_row = pd.Series(['Average', cf_mean, ec_mean, hlc_mean], index=mba_ntwk.columns)
+# mba_ntwk = pd.concat([mba_ntwk, average_row.to_frame().T], ignore_index=True)
 
 # Display the final wide DataFrame before melting, if needed
-print(net_breadth)
-
-
-# TODO
-# inspect index, regex
-
-
-
-
-
-
+print(mba_ntwk.iloc[:,100:])
 
 
 # Replace values of 2 with 1 specifically in columns corresponding to N1
 n1_columns = network_categories['N1']
 mba_ntwk[n1_columns] = mba_ntwk[n1_columns].replace(2, 1)
 
-# Create the subset DataFrame mba_ntwkSS_St_Avg directly using Email and N1 columns
-mba_ntwkSS_St_Avg = mba_ntwk[['Email'] + n1_columns]
+# Create the subset DataFrame mba_ntwk_size directly using Email and N1 columns
+mba_ntwk_size = mba_ntwk[['Email'] + n1_columns].copy()
 
 # Calculate network size (non-missing values count)
-mba_ntwkSS_St_Avg['Total_Size'] = mba_ntwkSS_St_Avg.iloc[:, 1:].notna().sum(axis=1)
+mba_ntwk_size['Total_Size'] = mba_ntwk_size.iloc[:, 1:].notna().sum(axis=1)
 
 # Calculate weak and strong ties
-mba_ntwkSS_St_Avg['Weak'] = mba_ntwkSS_St_Avg.iloc[:, 1:].apply(lambda row: (row == 1).sum(), axis=1)
-mba_ntwkSS_St_Avg['Strong'] = mba_ntwkSS_St_Avg.iloc[:, 1:].apply(lambda row: (row == 3).sum(), axis=1)
+mba_ntwk_size['Weak'] = mba_ntwk_size.iloc[:, 1:].apply(lambda row: (row == 1).sum(), axis=1)
+mba_ntwk_size['Strong'] = mba_ntwk_size.iloc[:, 1:].apply(lambda row: (row == 3).sum(), axis=1)
 
 # Calculate the average total size
-average_total_size = mba_ntwkSS_St_Avg['Total_Size'].mean(skipna=True)
+average_total_size = mba_ntwk_size['Total_Size'].mean(skipna=True)
 print(f"Average Total Size: {average_total_size}")
 
 
 
 # Display the final DataFrame
-print(mba_ntwkSS_St_Avg)
+print(mba_ntwk_size)
+
+# Keep only the specified columns in mba_ntwk
+mba_ntwk = mba_ntwk[['Email', 'Cross_Func', 'Ext', 'High_Lvl']]
+
+# Keep only the specified columns in mba_ntwk_size
+mba_ntwk_size = mba_ntwk_size[['Total_Size', 'Weak', 'Strong']]
+
+# Merge the cleaned DataFrames on the 'Email' column
+mba_ntwk = mba_ntwk.join(mba_ntwk_size, how='outer')
+
+# Display the merged DataFrame
+print(mba_ntwk)
+# print(merged_df)
+
+
