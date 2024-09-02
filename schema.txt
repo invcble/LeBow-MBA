@@ -1,0 +1,98 @@
+1.	Cover Page
+a.	Title: Drexel MBA Leadership Development Report
+b.	Student Name, Quarter
+
+NOTE:
+1. Response table has multiple columns with same key (e.g. Q9).
+2. Missing mappings for new metrics.
+
+
+What is under each unit?
+
+    a.	Unit 1: Self-Awareness 
+        i.	    Extraversion
+        ii.	    Agreeableness
+        iii.    Conscientiousness
+        iv.     Emotional Stability
+        v.	    Intellectance/Openness to Experience
+        vi.	    Core Self-Evaluation
+        vii.	Resistance to Change
+
+    b.	Unit 2: Building & Leveraging Social Networks
+        i.	    Network Size
+        ii.	    Strength of Network Ties
+        iii.	Network Breadth
+        iv.	    Political Skills
+        v.	    Political Skills – Networkig Abilities
+        vi.	    Political Skills – Interpersonal Influence
+        vii.	Political Skills – Social Astuteness
+        viii.	Political Skills – Apparent Sincerity
+
+    c.	Unit 3: Leadership and Motivation
+        i.	    Contingent Reward – Self-Rating
+        ii.	    Contingent Reward – Rating of Supervisor
+        iii.	Transformational Leadership – Self-Rating
+        iv.	    Transformational Leadership – Rating of Supervisor
+        vii.	Visionary Leadership – Self-Rating
+        viii.	Visionary Leadership – Rating of Supervisor
+        ix. 	Empowering Leadership
+        x.	    Empowering Leadership – Leading by Example
+        xi.	    Empowering Leadership – Participative Decision Making
+        xii.	Empowering Leadership – Coaching
+        xiii.	Empowering Leadership – Informing
+        xiv.	Empowering Leadership – Showing Concern
+        xv.	    Psychological Empowerment
+        xvi.	Psychological Empowerment – Meaning
+        xvii.	Psychological Empowerment – Competence
+        xviii.	Psychological Empowerment – Self-Determination
+        xix.	Psychological Empowerment – Impact
+
+    d.	Unit 4: Ethical Leadership
+        i.	    Ethical Leadership – Self-Rating
+        ii.	    Ethical Leadership – Rating of Supervisor
+        iii.	Bottom-Line Mentality – Self-Rating
+        iv. 	Bottom-Line Mentality – Rating of Supervisor
+        v.	    Supervisor Expediency – Self-Rating
+        vi.     Supervisor Expediency – Rating of Supervisor
+        vii.    Ethical Mindsets
+
+    e.	Unit 5: Leading High-Performance Teams
+        i.	    Psychological Collectivism
+        ii.	    Team Role Orientation – Organizer
+        iii.	Team Role Orientation – Doer
+        iv.	    Team Role Orientation – Challenger
+        v.	    Team Role Orientation – Innovator
+        vi.	    Team Role Orientation – Team Builder
+        vii.	Team Role Orientation – Connector
+
+
+
+
+
+4.	New Measures
+    a.	Global Transformational Leadership
+        i.	Definition: leadership that is characterized as developing, intellectually stimulating, and inspiring followers to transcend their self-interests for a collective purpose of vision.
+        ii.	Example: I treat staff as individuals, supports and encourages their development
+    b.	Visionary Leadership
+        i.	Definition: the communication of a future image of a collective with the aim of persuading others to contribute to its realization
+        ii.	Example: I communicate a clear idea about what should be accomplished.
+    c.	Supervisor Expediency
+        i.	Definition: a supervisor's use of unethical practices to expedite work for a self-serving purpose
+        ii.	Example: I cut corners to complete work assignments more quickly
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
