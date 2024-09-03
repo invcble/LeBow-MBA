@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 pd.set_option('future.no_silent_downcasting', True)
 
@@ -115,7 +114,7 @@ df = df[['Name'] + [col for col in df.columns if col != 'Name']]
 print(df)
 
 
-################## AVERAGE ##################
+################## CALCULATE AVERAGE ##################
 
 exclude_columns = ['Name', 'MBA program', 'Email', 'Academic years', 'Academic term', 'DOB', 'Gender', 'Profession', 'Work Ex. years']
 numeric_df = df.apply(pd.to_numeric, errors='coerce')
@@ -126,26 +125,54 @@ term_average_dict['Total_Size'] =  round(term_average_dict['Total_Size'])
 term_average_dict['PS'] =  round((term_average_dict['NA1'] + term_average_dict['II'] + term_average_dict['SA'] + term_average_dict['AS'])/4, 2)
 term_average_dict['EmpL'] =  round((term_average_dict['LBE'] + term_average_dict['PDM'] + term_average_dict['COACH'] + term_average_dict['INF'] + term_average_dict['ShowCon'])/5, 2)
 term_average_dict['PE'] =  round((term_average_dict['MEAN'] + term_average_dict['COMP'] + term_average_dict['SD'] + term_average_dict['IMP'])/4, 2)
+# print(term_average_dict)
 
 
-print(term_average_dict)
-new_term = 'Fall 55'
+################## LOAD AND UPDATE DB ##################
 
-# Update the 'Fall 25' column with values from average_dict based on the 'Code' column
+new_term = input("Please enter current term (use this format - Fall 23, Spring 22, Winter 23): ")
+
+# Create and update a new column with values from average_dict based on the 'Code' column
 database_df[new_term] = database_df['Code'].map(term_average_dict)
 
-# Recalculate the 'MBA Average' column, now including 'Fall 25'
-terms = ['Fall 21', 'Fall 22', 'Fall 23', 'Spring 22', 'Winter 23', 'Spring 23', 'Spring 24', 'Fall 55']
-# terms= terms.append(new_term)
-database_df['MBA Average'] = database_df[terms].mean(axis=1, skipna= True).round(2)
+# Recalculate the 'MBA Average' column, now including new term
+column_titles = database_df.columns.tolist()
+columns_to_remove = ['Sub-Categories', 'Code', 'MBA Average']
+terms = [col for col in column_titles if col not in columns_to_remove]
+
+if new_term not in terms:
+    terms.append(new_term)
+database_df['MBA Average'] = database_df[terms].mean(axis=1, skipna=True).round(2)
 
 # Round 'MBA Average' to integers for specific 'Code' values
 codes_to_round = ['Total_Size', 'Strong', 'Weak']
 database_df.loc[database_df['Code'].isin(codes_to_round), 'MBA Average'] = (
     database_df.loc[database_df['Code'].isin(codes_to_round), 'MBA Average'].round(0).astype(int)
 )
-# Save the updated DataFrame back to the Excel file
+
 with pd.ExcelWriter(data_dict_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
     database_df.to_excel(writer, sheet_name='Database', index=False)
 
-# automate column handling, pull updated MBA_average
+print("Database updated.")
+
+
+################## CALCULATING MBA AVERAGE ##################
+
+mba_average_dict = {f"{code}_MBAavg": avg for code, avg in database_df.set_index('Code')['MBA Average'].items()}
+
+# print(mba_average_dict)
+
+
+################## UPDATE AND SORT MAIN DF ##################
+
+for key, value in mba_average_dict.items():
+    df[key] = value
+
+fixed_columns = ['Name', 'MBA program', 'Email', 'Academic years', 'Academic term', 'DOB', 'Gender', 'Profession', 'Work Ex. years']
+remaining_columns = sorted([col for col in df.columns if col not in fixed_columns])
+sorted_columns = fixed_columns + remaining_columns
+
+df = df[sorted_columns]
+print(df)
+print(df.columns.tolist())
+
