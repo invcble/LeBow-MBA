@@ -6,6 +6,14 @@ NOTE:
 1. Response table has multiple columns with same key (e.g. Q9).
 2. Missing mappings for new metrics.
 
+1. confirm duplicate columns,
+# Yoonhe wil fix it
+2. recode new entries,
+3. where is second new metric coming from,
+# VBL is staying
+# Delete data for VL
+4. generate a sample data once more
+5. possible to get last year's network data?
 
 What is under each unit?
 

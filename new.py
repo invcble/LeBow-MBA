@@ -1,4 +1,6 @@
 import pandas as pd
+import sys
+from chart_single import plot_and_save_score
 
 pd.set_option('future.no_silent_downcasting', True)
 
@@ -114,11 +116,11 @@ df = df[['Name'] + [col for col in df.columns if col != 'Name']]
 print(df)
 
 
-################## CALCULATE AVERAGE ##################
+################## CALCULATE TERM AVERAGE ##################
 
-exclude_columns = ['Name', 'MBA program', 'Email', 'Academic years', 'Academic term', 'DOB', 'Gender', 'Profession', 'Work Ex. years']
+demographic_columns = ['Name', 'MBA program', 'Email', 'Academic years', 'Academic term', 'DOB', 'Gender', 'Profession', 'Work Ex. years']
 numeric_df = df.apply(pd.to_numeric, errors='coerce')
-term_average_dict = numeric_df.drop(columns=exclude_columns, errors='ignore').mean().round(2).to_dict()
+term_average_dict = numeric_df.drop(columns=demographic_columns, errors='ignore').mean().round(2).to_dict()
 term_average_dict['Weak'] =  round(term_average_dict['Weak'])
 term_average_dict['Strong'] =  round(term_average_dict['Strong'])
 term_average_dict['Total_Size'] =  round(term_average_dict['Total_Size'])
@@ -133,15 +135,25 @@ term_average_dict['PE'] =  round((term_average_dict['MEAN'] + term_average_dict[
 new_term = input("Please enter current term (use this format - Fall 23, Spring 22, Winter 23): ")
 
 # Create and update a new column with values from average_dict based on the 'Code' column
-database_df[new_term] = database_df['Code'].map(term_average_dict)
+# database_df[new_term] = database_df['Code'].map(term_average_dict)
 
 # Recalculate the 'MBA Average' column, now including new term
 column_titles = database_df.columns.tolist()
 columns_to_remove = ['Sub-Categories', 'Code', 'MBA Average']
 terms = [col for col in column_titles if col not in columns_to_remove]
 
-if new_term not in terms:
+if new_term in terms:
+    ans = input('Term already exists. Do you want to overwrite with new data and update MBA average? y/n: ').strip().lower()
+    if ans != 'y':
+        sys.exit()
+    else:
+        # Overwrite term
+        database_df[new_term] = database_df['Code'].map(term_average_dict)
+else:
+    # Inserting new term
     terms.append(new_term)
+    database_df[new_term] = database_df['Code'].map(term_average_dict)
+
 database_df['MBA Average'] = database_df[terms].mean(axis=1, skipna=True).round(2)
 
 # Round 'MBA Average' to integers for specific 'Code' values
@@ -150,29 +162,68 @@ database_df.loc[database_df['Code'].isin(codes_to_round), 'MBA Average'] = (
     database_df.loc[database_df['Code'].isin(codes_to_round), 'MBA Average'].round(0).astype(int)
 )
 
-with pd.ExcelWriter(data_dict_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
-    database_df.to_excel(writer, sheet_name='Database', index=False)
+try:
+    with pd.ExcelWriter(data_dict_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+        database_df.to_excel(writer, sheet_name='Database', index=False)
+        print("Database updated.")
+except PermissionError as e:
+    print(e)
+    print("Close the Database file before running this script.")
+    sys.exit()
 
-print("Database updated.")
 
-
-################## CALCULATING MBA AVERAGE ##################
+################## LOAD MBA AVERAGE FROM UPDATED DB AND SAVE TO DF ##################
 
 mba_average_dict = {f"{code}_MBAavg": avg for code, avg in database_df.set_index('Code')['MBA Average'].items()}
-
 # print(mba_average_dict)
-
-
-################## UPDATE AND SORT MAIN DF ##################
 
 for key, value in mba_average_dict.items():
     df[key] = value
 
-fixed_columns = ['Name', 'MBA program', 'Email', 'Academic years', 'Academic term', 'DOB', 'Gender', 'Profession', 'Work Ex. years']
-remaining_columns = sorted([col for col in df.columns if col not in fixed_columns])
-sorted_columns = fixed_columns + remaining_columns
+
+################## CALCULATE STANDARD DEVIATION ##################
+
+demographic_columns = ['Name', 'MBA program', 'Email', 'Academic years', 'Academic term', 
+                   'DOB', 'Gender', 'Profession', 'Work Ex. years']
+
+exclude_cols = demographic_columns + ['Total_Size', 'Strong', 'Weak', 'High_Lvl', 'Ext', 'Cross_Func']
+
+unique_columns = [col for col in df.columns if col not in exclude_cols and not col.endswith('_MBAavg')]
+
+# SD for each unique column using MBA averages
+for col in unique_columns:
+    mba_avg_col = f'{col}_MBAavg'
+    
+    if mba_avg_col in df.columns:
+        df[f'{col}_SD'] = ((df[col] - df[mba_avg_col]) ** 2).mean() ** 0.5
+
+
+################## SORT MAIN DF ##################
+
+remaining_columns = sorted([col for col in df.columns if col not in demographic_columns])
+sorted_columns = demographic_columns + remaining_columns
 
 df = df[sorted_columns]
 print(df)
 print(df.columns.tolist())
 
+
+################## GENERATE IMAGES ##################
+
+
+# Select a row from the DataFrame (for example, the first row)
+row = df.iloc[0]
+
+# Iterate over the unique columns and plot using the function
+for col in unique_columns:
+    # Get the corresponding _MBAavg and _SD values
+    your_score = row[col]
+    mba_avg_col = f'{col}_MBAavg'
+    sd_col = f'{col}_SD'
+    
+    if mba_avg_col in row and sd_col in row:
+        drexel_mba_avg = row[mba_avg_col]
+        standard_deviation = row[sd_col]
+        
+        # Call the plotting function with the values
+        plot_and_save_score(col, your_score, drexel_mba_avg, standard_deviation)
