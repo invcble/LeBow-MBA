@@ -4,14 +4,16 @@ from chart_single import plot_and_save_score
 
 pd.set_option('future.no_silent_downcasting', True)
 
-file_path = 'dummy_data_value.xlsx'
+file_path = 'dummy_data.xlsx'
 df = pd.read_excel(file_path, header=0)
-
+print(df)
 data_dict_path = 'Database_Map.xlsx'
 data_dict_df = pd.read_excel(data_dict_path, sheet_name='Map', header=0)
 database_df = pd.read_excel(data_dict_path, sheet_name='Database', header=0)
 
-df = df[df['Finished'] == 1].reset_index(drop=True)
+# Filtering actual responses/ Removing question and tag rows
+df['Progress'] = pd.to_numeric(df['Progress'], errors='coerce')
+df = df[df['Progress'] >= 75].reset_index(drop=True)
 
 # Function to identify and merge duplicate columns
 def merge_columns_with_suffix(df):
@@ -80,6 +82,9 @@ df['MBA program'] = df['MBA program'].map(mba_program_mapping)
 df['Academic years'] = df['Academic years'].map(academic_years_mapping)
 df['Academic term'] = df['Academic term'].map(academic_term_mapping)
 df['Gender'] = df['Gender'].map(gender_mapping)
+df['PS'] =  round((df['NA1'] + df['II'] + df['SA'] + df['AS'])/4, 2)
+df['EmpL'] =  round((df['LBE'] + df['PDM'] + df['COACH'] + df['INF'] + df['ShowCon'])/5, 2)
+df['PE'] =  round((df['MEAN'] + df['COMP'] + df['SD'] + df['IMP'])/4, 2)
 
 
 ################## NETWORK ##################
@@ -207,23 +212,25 @@ df = df[sorted_columns]
 print(df)
 print(df.columns.tolist())
 
+with pd.ExcelWriter("df.xlsx", engine='openpyxl') as writer:
+    df.to_excel(writer, index=False)
 
 ################## GENERATE IMAGES ##################
 
 
-# Select a row from the DataFrame (for example, the first row)
-row = df.iloc[0]
+# # Select a row from the DataFrame (for example, the first row)
+# row = df.iloc[0]
 
-# Iterate over the unique columns and plot using the function
-for col in unique_columns:
-    # Get the corresponding _MBAavg and _SD values
-    your_score = row[col]
-    mba_avg_col = f'{col}_MBAavg'
-    sd_col = f'{col}_SD'
+# # Iterate over the unique columns and plot using the function
+# for col in unique_columns:
+#     # Get the corresponding _MBAavg and _SD values
+#     your_score = row[col]
+#     mba_avg_col = f'{col}_MBAavg'
+#     sd_col = f'{col}_SD'
     
-    if mba_avg_col in row and sd_col in row:
-        drexel_mba_avg = row[mba_avg_col]
-        standard_deviation = row[sd_col]
+#     if mba_avg_col in row and sd_col in row:
+#         drexel_mba_avg = row[mba_avg_col]
+#         standard_deviation = row[sd_col]
         
-        # Call the plotting function with the values
-        plot_and_save_score(col, your_score, drexel_mba_avg, standard_deviation)
+#         # Call the plotting function with the values
+#         plot_and_save_score(col, your_score, drexel_mba_avg, standard_deviation)
