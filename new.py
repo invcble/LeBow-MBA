@@ -221,12 +221,18 @@ with pd.ExcelWriter("df.xlsx", engine='openpyxl') as writer:
 
 
 # Select a row from the DataFrame (for example, the first row)
-row = df.iloc[2]
+row = df.iloc[0]
 
-# Iterate over the unique columns and plot using the function
+# Define the columns that should use a scale of 5
+scale_5_columns = {'CHAL', 'CONN', 'DOER', 'INNOV', 'ORG', 'PC', 'TB'}
+
+# Iterate over the unique columns and plot using the appropriate scale
 for col in unique_columns:
+    # Determine if the current column should use a scale of 5 or 7
+    switch_scale = col in scale_5_columns
+    
     # Get the corresponding _MBAavg and _SD values
-    your_score = row[col]
+    your_score = row[col] if not pd.isna(row[col]) else 0
     mba_avg_col = f'{col}_MBAavg'
     sd_col = f'{col}_SD'
     
@@ -234,16 +240,15 @@ for col in unique_columns:
         drexel_mba_avg = row[mba_avg_col]
         standard_deviation = row[sd_col]
         
-        # Call the plotting function with the values
-        plot_and_save_single(col, your_score, drexel_mba_avg, standard_deviation)
+        # Call the plotting function with the determined scale
+        plot_and_save_single(col, your_score, drexel_mba_avg, standard_deviation, switch_scale=switch_scale)
 
-
-your_scores = [row[col] for col in strength_columns]
+your_scores = [row[col] if not pd.isna(row[col]) else 0 for col in strength_columns]
 drexel_mba_scores = [row[f'{col}_MBAavg'] for col in strength_columns if f'{col}_MBAavg' in row]
 
 plot_and_save_multi(your_scores, drexel_mba_scores, switch_categories=False)
 
-your_scores_contact = [row[col] for col in breadth_columns]
-drexel_mba_scores_contact = [row[f'{col}_MBAavg'] for col in breadth_columns if f'{col}_MBAavg' in row]
+your_scores_ = [row[col] if not pd.isna(row[col]) else 0 for col in breadth_columns]
+drexel_mba_scores_ = [row[f'{col}_MBAavg'] for col in breadth_columns if f'{col}_MBAavg' in row]
 
-plot_and_save_multi(your_scores_contact, drexel_mba_scores_contact, switch_categories=True)
+plot_and_save_multi(your_scores_, drexel_mba_scores_, switch_categories=True)

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-def plot_and_save_single(attribute, your_score, drexel_mba_avg, standard_deviation):
+def plot_and_save_single(attribute, your_score, drexel_mba_avg, standard_deviation, switch_scale=False):
     # Bar positions (Reversed to show yellow bar above blue bar)
     categories = ['Drexel MBA Average', 'Your Score']
     scores = [drexel_mba_avg, your_score]
@@ -16,11 +16,12 @@ def plot_and_save_single(attribute, your_score, drexel_mba_avg, standard_deviati
     plt.figure(figsize=(8, 4))
 
     # Add light gray grid lines for every 2nd tick
-    for tick in np.arange(0, 8, 2):
+    scale_max = 5 if switch_scale else 7  # Set max scale based on switch
+    for tick in np.arange(0, scale_max + 1, 2):
         plt.axvline(x=tick + 1, color='lightgray', linewidth=0.5, zorder=1)
 
     # Set x-ticks with increased font size
-    plt.xticks(np.arange(0, 8, 1), fontsize=14)
+    plt.xticks(np.arange(0, scale_max + 1, 1), fontsize=14)
 
     # Create slimmer bars closer together
     bars = plt.barh(y_pos, scores, height=0.7, left=0.01, color=[pantone_294C, pantone_7548C], zorder=3)
@@ -31,8 +32,8 @@ def plot_and_save_single(attribute, your_score, drexel_mba_avg, standard_deviati
     # Remove y-ticks
     plt.yticks([])
 
-    # Set x-axis limit (Assuming a 1-7 scale)
-    plt.xlim(1, 7)
+    # Set x-axis limit based on the scale switch
+    plt.xlim(1, scale_max)
 
     # Add labels within the bars, formatting to omit trailing zeros
     for i, bar in enumerate(bars):
