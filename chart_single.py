@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
-def plot_and_save_score(attribute, your_score, drexel_mba_avg, standard_deviation):
+def plot_and_save_single(attribute, your_score, drexel_mba_avg, standard_deviation):
     # Bar positions (Reversed to show yellow bar above blue bar)
     categories = ['Drexel MBA Average', 'Your Score']
     scores = [drexel_mba_avg, your_score]
@@ -45,5 +46,7 @@ def plot_and_save_score(attribute, your_score, drexel_mba_avg, standard_deviatio
 
     # Save the plot as an image file named after the attribute
     plt.tight_layout()
+    if not os.path.exists('CHART_IMAGES'):
+        os.makedirs('CHART_IMAGES')
     plt.savefig(f'CHART_IMAGES/{attribute}.png')
     plt.close()

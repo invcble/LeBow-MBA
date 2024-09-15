@@ -1,6 +1,7 @@
 import pandas as pd
 import sys
-from chart_single import plot_and_save_score
+from chart_single import plot_and_save_single
+from chart_multi import plot_and_save_multi
 
 pd.set_option('future.no_silent_downcasting', True)
 
@@ -190,9 +191,10 @@ for key, value in mba_average_dict.items():
 
 demographic_columns = ['Name', 'MBA program', 'Email', 'Academic years', 'Academic term', 
                    'DOB', 'Gender', 'Profession', 'Work Ex. years']
+strength_columns = ['Total_Size', 'Strong', 'Weak']
+breadth_columns = ['High_Lvl', 'Ext', 'Cross_Func']
 
-exclude_cols = demographic_columns + ['Total_Size', 'Strong', 'Weak', 'High_Lvl', 'Ext', 'Cross_Func']
-
+exclude_cols = demographic_columns + strength_columns + breadth_columns
 unique_columns = [col for col in df.columns if col not in exclude_cols and not col.endswith('_MBAavg')]
 
 # SD for each unique column using MBA averages
@@ -218,19 +220,30 @@ with pd.ExcelWriter("df.xlsx", engine='openpyxl') as writer:
 ################## GENERATE IMAGES ##################
 
 
-# # Select a row from the DataFrame (for example, the first row)
-# row = df.iloc[0]
+# Select a row from the DataFrame (for example, the first row)
+row = df.iloc[2]
 
-# # Iterate over the unique columns and plot using the function
-# for col in unique_columns:
-#     # Get the corresponding _MBAavg and _SD values
-#     your_score = row[col]
-#     mba_avg_col = f'{col}_MBAavg'
-#     sd_col = f'{col}_SD'
+# Iterate over the unique columns and plot using the function
+for col in unique_columns:
+    # Get the corresponding _MBAavg and _SD values
+    your_score = row[col]
+    mba_avg_col = f'{col}_MBAavg'
+    sd_col = f'{col}_SD'
     
-#     if mba_avg_col in row and sd_col in row:
-#         drexel_mba_avg = row[mba_avg_col]
-#         standard_deviation = row[sd_col]
+    if mba_avg_col in row and sd_col in row:
+        drexel_mba_avg = row[mba_avg_col]
+        standard_deviation = row[sd_col]
         
-#         # Call the plotting function with the values
-#         plot_and_save_score(col, your_score, drexel_mba_avg, standard_deviation)
+        # Call the plotting function with the values
+        plot_and_save_single(col, your_score, drexel_mba_avg, standard_deviation)
+
+
+your_scores = [row[col] for col in strength_columns]
+drexel_mba_scores = [row[f'{col}_MBAavg'] for col in strength_columns if f'{col}_MBAavg' in row]
+
+plot_and_save_multi(your_scores, drexel_mba_scores, switch_categories=False)
+
+your_scores_contact = [row[col] for col in breadth_columns]
+drexel_mba_scores_contact = [row[f'{col}_MBAavg'] for col in breadth_columns if f'{col}_MBAavg' in row]
+
+plot_and_save_multi(your_scores_contact, drexel_mba_scores_contact, switch_categories=True)
