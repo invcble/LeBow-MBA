@@ -240,7 +240,6 @@ for col in unique_columns:
         drexel_mba_avg = row[mba_avg_col]
         standard_deviation = row[sd_col]
         
-        # Call the plotting function with the determined scale
         plot_and_save_single(col, your_score, drexel_mba_avg, standard_deviation, switch_scale=switch_scale)
 
 your_scores = [row[col] if not pd.isna(row[col]) else 0 for col in strength_columns]
