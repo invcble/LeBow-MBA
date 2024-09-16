@@ -1,12 +1,16 @@
 import pandas as pd
 import sys
-
+from gen_report import save_reports
 pd.set_option('future.no_silent_downcasting', True)
 
+
 file_path = 'dummy_data.xlsx'
+data_dict_path = 'Database_Map.xlsx'
+template_path = 'MBA_template.pdf'
+
+
 df = pd.read_excel(file_path, header=0)
 print(df)
-data_dict_path = 'Database_Map.xlsx'
 data_dict_df = pd.read_excel(data_dict_path, sheet_name='Map', header=0)
 database_df = pd.read_excel(data_dict_path, sheet_name='Database', header=0)
 
@@ -212,7 +216,10 @@ df = df[sorted_columns]
 print(df)
 print(df.columns.tolist())
 
-with pd.ExcelWriter("df.xlsx", engine='openpyxl') as writer:
+with pd.ExcelWriter(f"{new_term}_dataframe.xlsx", engine='openpyxl') as writer:
     df.to_excel(writer, index=False)
 
-# ################## GENERATE IMAGES ##################
+
+################## GENERATE REPORTS ##################
+
+save_reports(new_term, df, template_path)
