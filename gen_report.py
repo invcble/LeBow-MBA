@@ -233,4 +233,4 @@ def save_reports(term, df, template_path):
 
         # Clean up
         os.remove("data_overlay.pdf")
-        print(f"PDF generated: Workbook_{name}.pdf")
+        print(f"PDF generated: Workbook {name}.pdf")
