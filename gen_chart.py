@@ -12,7 +12,7 @@ def save_chart(row, df):
     unique_columns = [col for col in df.columns if col not in exclude_cols and not col.endswith('_MBAavg')]
 
     # Iterate over the unique columns and plot using the appropriate scale
-    for col in unique_columns:
+    for col in unique_columns + ['Total_Size']:
         # Determine if the current column should use a scale of 5 or 7
         switch_scale = col in scale_5_columns
         

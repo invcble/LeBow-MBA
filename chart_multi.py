@@ -5,7 +5,7 @@ import os
 def plot_and_save_multi(your_scores, drexel_mba_scores, switch_categories=False):
     # Define categories with the switch
     if switch_categories:
-        categories = ['Higher Level Contacts', 'External Contacts', 'Cross-Functional Contacts']
+        categories = ['Higher\nLevel\nContacts', 'External\nContacts', 'Cross\nFunctional\nContacts']
         # Convert scores to percentages
         your_scores = [score * 100 for score in your_scores]
         drexel_mba_scores = [score * 100 for score in drexel_mba_scores]
@@ -13,7 +13,7 @@ def plot_and_save_multi(your_scores, drexel_mba_scores, switch_categories=False)
         x_ticks = np.arange(0, 101, 20)  # Set x-axis ticks for percentages
         score_format = '{:.0f}%'  # Format labels as percentages
     else:
-        categories = ['                             Strong  ', 'Weak  ', 'Size  ']
+        categories = [ 'Size  ', 'Strong  ', 'Weak  ']
         # Cast scores to integers
         your_scores = [int(score) for score in your_scores]
         drexel_mba_scores = [int(score) for score in drexel_mba_scores]
