@@ -2,9 +2,7 @@ from PyPDF2 import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.pagesizes import letter
-from PIL import Image
-import os, datetime
-import pandas as pd
+import os
 
 from gen_chart import save_chart
 
