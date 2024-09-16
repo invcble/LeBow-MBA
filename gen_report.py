@@ -45,32 +45,32 @@ for index, row in df.iterrows():
 
         if pagenum == 1:
             chart1 = ImageReader("CHART_IMAGES/E.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/A.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
 
         if pagenum == 2:
             chart1 = ImageReader("CHART_IMAGES/C.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/ES.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
 
         if pagenum == 3:
             chart1 = ImageReader("CHART_IMAGES/OTE.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/CSE.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
         
         if pagenum == 4:
             chart1 = ImageReader("CHART_IMAGES/RTC.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
         
         if pagenum == 6:
             chart1 = ImageReader("CHART_IMAGES/Total_Size.png")
-            o.drawImage(chart1, 160, 440, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 440, 300, 150, mask="auto")
 
         if pagenum == 7:
             chart1 = ImageReader("CHART_IMAGES/strength.png")
@@ -82,138 +82,138 @@ for index, row in df.iterrows():
 
         if pagenum == 9:
             chart1 = ImageReader("CHART_IMAGES/PS.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/NA1.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
 
         if pagenum == 10:
             chart1 = ImageReader("CHART_IMAGES/II.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/SA.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
 
         if pagenum == 11:
             chart1 = ImageReader("CHART_IMAGES/AS.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
 
         if pagenum == 13: #super
             chart1 = ImageReader("CHART_IMAGES/CR.png")
-            o.drawImage(chart1, 160, 365, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 365, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/CR_super.png")
-            o.drawImage(chart2, 160, 155, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 155, 300, 150, mask="auto")
 
         if pagenum == 14: #super
             chart1 = ImageReader("CHART_IMAGES/GTL.png")
-            o.drawImage(chart1, 160, 365, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 365, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/GTL_super.png")
-            o.drawImage(chart2, 160, 155, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 155, 300, 150, mask="auto")
 
         if pagenum == 15: #super
             chart1 = ImageReader("CHART_IMAGES/VBL.png")
-            o.drawImage(chart1, 160, 369, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 369, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/VBL_super.png")
-            o.drawImage(chart2, 160, 159, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 159, 300, 150, mask="auto")
 
         if pagenum == 16: #super
             chart1 = ImageReader("CHART_IMAGES/VL.png")
-            o.drawImage(chart1, 160, 370, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 370, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/VL_super.png")
-            o.drawImage(chart2, 160, 160, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 157, 300, 150, mask="auto")
         
         if pagenum == 17:
             chart1 = ImageReader("CHART_IMAGES/EmpL.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
         
         if pagenum == 18:
             chart1 = ImageReader("CHART_IMAGES/LBE.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/PDM.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
 
         if pagenum == 19:
             chart1 = ImageReader("CHART_IMAGES/COACH.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/INF.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
 
         if pagenum == 20:
             chart1 = ImageReader("CHART_IMAGES/ShowCon.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/PE.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
 
         if pagenum == 21:
             chart1 = ImageReader("CHART_IMAGES/MEAN.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/COMP.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
         
         if pagenum == 22:
             chart1 = ImageReader("CHART_IMAGES/SD.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/IMP.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
 
         if pagenum == 24: #super
             chart1 = ImageReader("CHART_IMAGES/EL.png")
-            o.drawImage(chart1, 160, 370, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 370, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/EL_super.png")
-            o.drawImage(chart2, 160, 160, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 157, 300, 150, mask="auto")
 
         if pagenum == 25: #super
             chart1 = ImageReader("CHART_IMAGES/BLM.png")
-            o.drawImage(chart1, 160, 370, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 370, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/BLM_super.png")
-            o.drawImage(chart2, 160, 160, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 157, 300, 150, mask="auto")
         
         if pagenum == 26: #super
             chart1 = ImageReader("CHART_IMAGES/SE.png")
-            o.drawImage(chart1, 160, 370, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 370, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/SE_super.png")
-            o.drawImage(chart2, 160, 160, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 157, 300, 150, mask="auto")
 
         if pagenum == 27:
             chart1 = ImageReader("CHART_IMAGES/EM.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
 
         if pagenum == 29:
             chart1 = ImageReader("CHART_IMAGES/PC.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/ORG.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
 
         if pagenum == 30:
             chart1 = ImageReader("CHART_IMAGES/DOER.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/CHAL.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
 
         if pagenum == 31:
             chart1 = ImageReader("CHART_IMAGES/INNOV.png")
-            o.drawImage(chart1, 160, 460, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 460, 300, 150, mask="auto")
                 
             chart2 = ImageReader("CHART_IMAGES/TB.png")
-            o.drawImage(chart2, 160, 156, 300, 150, mask="auto")
+            o.drawImage(chart2, 157, 156, 300, 150, mask="auto")
         
         if pagenum == 32:
             chart1 = ImageReader("CHART_IMAGES/CONN.png")
-            o.drawImage(chart1, 160, 455, 300, 150, mask="auto")
+            o.drawImage(chart1, 157, 455, 300, 150, mask="auto")
 
         o.setFont("Helvetica", 10)
         if pagenum not in (0, 5, 12, 23, 28, 33, 34, 35):
@@ -237,7 +237,7 @@ for index, row in df.iterrows():
         writer.add_page(target_page)
 
     # Save the combined PDF with the employee's name
-    writer.write(f"Workbook_{name}.pdf")
+    writer.write(f"{pdf_output_dir}/Workbook_{name}.pdf")
 
     # Clean up
     os.remove("data_overlay.pdf")
