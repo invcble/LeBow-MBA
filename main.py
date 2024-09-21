@@ -142,9 +142,6 @@ term_average_dict['PE'] =  round((term_average_dict['MEAN'] + term_average_dict[
 
 new_term = input("Please enter current term (use this format - Fall 23, Spring 22, Winter 23): ")
 
-# Create and update a new column with values from average_dict based on the 'Code' column
-# database_df[new_term] = database_df['Code'].map(term_average_dict)
-
 # Recalculate the 'MBA Average' column, now including new term
 column_titles = database_df.columns.tolist()
 columns_to_remove = ['Sub-Categories', 'Code', 'MBA Average']

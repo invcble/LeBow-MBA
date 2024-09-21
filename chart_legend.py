@@ -1,5 +1,5 @@
-
-
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # Colors (Pantone 294C and Pantone 7548C)

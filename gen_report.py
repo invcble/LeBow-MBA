@@ -2,7 +2,7 @@ from PyPDF2 import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.pagesizes import letter
-import os
+import os, shutil
 
 from gen_chart import save_chart
 
@@ -227,8 +227,14 @@ def save_reports(term, df, template_path):
             writer.add_page(target_page)
 
         # Save the combined PDF with the employee's name
-        writer.write(f"{pdf_output_dir}/Workbook_{name}.pdf")
+        writer.write(f"{pdf_output_dir}/Workbook {name}.pdf")
 
         # Clean up
         os.remove("data_overlay.pdf")
+        shutil.rmtree("CHART_IMAGES")
         print(f"PDF generated: Workbook {name}.pdf")
+
+# import pandas as pd
+# df = pd.read_excel('test_dataframe.xlsx', header=0)
+
+# save_reports("testadsa", df, "MBA_template.pdf")

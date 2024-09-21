@@ -15,7 +15,7 @@ class MBAReportApp(ctk.CTk):
 
         # Window configuration
         self.title("MBA Report Generator")
-        self.geometry("600x700")
+        self.geometry("600x400")
 
         # File path inputs
         self.file_path_label = ctk.CTkLabel(self, text="Survey Data File (.xlsx) Path:")
@@ -23,12 +23,12 @@ class MBAReportApp(ctk.CTk):
         self.file_path_entry = ctk.CTkEntry(self, width=500)
         self.file_path_entry.pack()
 
-        self.data_dict_path_label = ctk.CTkLabel(self, text="Database Map File Path:")
+        self.data_dict_path_label = ctk.CTkLabel(self, text="Database Map File (.xlsx) Path:")
         self.data_dict_path_label.pack(pady=10)
         self.data_dict_entry = ctk.CTkEntry(self, width=500)
         self.data_dict_entry.pack()
 
-        self.template_path_label = ctk.CTkLabel(self, text="Template File Path:")
+        self.template_path_label = ctk.CTkLabel(self, text="Template File (.pdf) Path:")
         self.template_path_label.pack(pady=10)
         self.template_entry = ctk.CTkEntry(self, width=500)
         self.template_entry.pack()
@@ -268,11 +268,12 @@ class MBAReportApp(ctk.CTk):
             messagebox.showinfo("Success", "Reports generated successfully.")
 
         except Exception as e:
+            print(e)
             messagebox.showerror("Processing Error", f"Error during processing: {e}")
             return
         
         finally:
-            self.focus() 
+            self.focus()
 
 # Run the application
 if __name__ == "__main__":
