@@ -4,7 +4,7 @@ from chart_multi import plot_and_save_multi
 
 def save_chart(row, df):
     scale_5_columns = {'CHAL', 'CONN', 'DOER', 'INNOV', 'ORG', 'PC', 'TB'}
-    demographic_columns = ['Name', 'MBA program', 'Email', 'Academic years', 'Academic term', 'DOB', 'Gender', 'Profession', 'Work Ex. years']
+    demographic_columns = ['Name', 'Email', 'Academic years', 'Academic term', 'DOB', 'Gender', 'Profession', 'Work Ex. years']
     strength_columns = ['Total_Size', 'Strong', 'Weak']
     breadth_columns = ['High_Lvl', 'Ext', 'Cross_Func']
 

@@ -3,8 +3,10 @@ import pandas as pd
 import os
 import warnings
 from tkinter import messagebox
+
 pd.set_option('future.no_silent_downcasting', True)
 warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
+warnings.filterwarnings("ignore", message=".*Tight layout not applied.*")
 
 from gen_report import save_reports
 
@@ -15,7 +17,7 @@ class MBAReportApp(ctk.CTk):
 
         # Window configuration
         self.title("MBA Report Generator")
-        self.geometry("600x400")
+        self.geometry("600x450")
 
         # File path inputs
         self.file_path_label = ctk.CTkLabel(self, text="Survey Data File (.xlsx) Path:")
@@ -38,6 +40,10 @@ class MBAReportApp(ctk.CTk):
         self.term_label.pack(pady=10)
         self.term_entry = ctk.CTkEntry(self, width=500)
         self.term_entry.pack()
+
+        # Submit button
+        self.check_box = ctk.CTkCheckBox(self, text="Late Submission Mode (Doesn't update Term & MBA Average)")
+        self.check_box.pack(pady=20)
 
         # Submit button
         self.submit_button = ctk.CTkButton(self, text="Generate Report", command=self.generate_report)
@@ -136,7 +142,7 @@ class MBAReportApp(ctk.CTk):
             df['Name'] = (df['Q1'].str.strip() + ' ' + df['Q2'].str.strip()).str.title()
             df.drop(['Q1', 'Q2'], axis=1, inplace=True)
 
-            df.rename(columns={'Q3': 'MBA program', 'Q34': 'Email', 'Q39': 'Academic years', 'Q40': 'Academic term', 'Q5': 'Gender', 'Q4': 'DOB', 'Q7': 'Profession', 'Q8': 'Work Ex. years'}, inplace=True)
+            df.rename(columns={'Q34': 'Email', 'Q39': 'Academic years', 'Q40': 'Academic term', 'Q5': 'Gender', 'Q4': 'DOB', 'Q7': 'Profession', 'Q8': 'Work Ex. years'}, inplace=True)
             df.drop_duplicates(subset=['Email'], keep='last', inplace=True)
 
             mba_program_mapping = {1: 'Online MBA', 2: 'Malvern MBA (Vanguard)', 3: 'University City MBA', 4: 'Full-Time MBA'}
@@ -144,7 +150,6 @@ class MBAReportApp(ctk.CTk):
             academic_term_mapping = {1: 'Fall Quarter', 2: 'Winter Quarter', 3: 'Spring Quarter'}
             gender_mapping = {1: 'Male', 2: 'Female', 3: 'Non-binary', 4: 'Other, or do not wish to share'}
 
-            df['MBA program'] = df['MBA program'].map(mba_program_mapping)
             df['Academic years'] = df['Academic years'].map(academic_years_mapping)
             df['Academic term'] = df['Academic term'].map(academic_term_mapping)
             df['Gender'] = df['Gender'].map(gender_mapping)
@@ -177,55 +182,62 @@ class MBAReportApp(ctk.CTk):
             df = pd.merge(df, mba_ntwk, on='Email', how='left').sort_index()
             df = df[['Name'] + [col for col in df.columns if col != 'Name']]
 
-            ################## CALCULATE TERM AVERAGE ##################
 
-            demographic_columns = ['Name', 'MBA program', 'Email', 'Academic years', 'Academic term', 'DOB', 'Gender', 'Profession', 'Work Ex. years']
-            numeric_df = df.apply(pd.to_numeric, errors='coerce')
-            term_average_dict = numeric_df.drop(columns=demographic_columns, errors='ignore').mean().round(2).to_dict()
-            term_average_dict['Weak'] =  round(term_average_dict['Weak'])
-            term_average_dict['Strong'] =  round(term_average_dict['Strong'])
-            term_average_dict['Total_Size'] =  round(term_average_dict['Total_Size'])
-            term_average_dict['PS'] =  round((term_average_dict['NA1'] + term_average_dict['II'] + term_average_dict['SA'] + term_average_dict['AS'])/4, 2)
-            term_average_dict['EmpL'] =  round((term_average_dict['LBE'] + term_average_dict['PDM'] + term_average_dict['COACH'] + term_average_dict['INF'] + term_average_dict['ShowCon'])/5, 2)
-            term_average_dict['PE'] =  round((term_average_dict['MEAN'] + term_average_dict['COMP'] + term_average_dict['SD'] + term_average_dict['IMP'])/4, 2)
+            demographic_columns = ['Name', 'Email', 'Academic years', 'Academic term', 'DOB', 'Gender', 'Profession', 'Work Ex. years']
+        
+            # Check for Late Mode
+            if self.check_box.get():
+                print('late mode enabled')
 
-            ################## LOAD AND UPDATE DB ##################
-
-            # Create and update a new column with values from average_dict based on the 'Code' column
-            # database_df[new_term] = database_df['Code'].map(term_average_dict)
-
-            # Recalculate the 'MBA Average' column, now including new term
-            column_titles = database_df.columns.tolist()
-            columns_to_remove = ['Sub-Categories', 'Code', 'MBA Average']
-            terms = [col for col in column_titles if col not in columns_to_remove]
-
-            if new_term in terms:
-                ans = messagebox.askyesno("Overwrite Term", f"Term '{new_term}' already exists. Do you want to overwrite with new data and update MBA average?")
-                if not ans:
-                    return  # Do not proceed
-                else:
-                    # Overwrite term
-                    database_df[new_term] = database_df['Code'].map(term_average_dict)
+                # No need to calculate Term avg, as we will be loading MBA avg from DB directly in this mode.
             else:
-                # Inserting new term
-                terms.append(new_term)
-                database_df[new_term] = database_df['Code'].map(term_average_dict)
+                print('late mode disabled')
 
-            database_df['MBA Average'] = database_df[terms].mean(axis=1, skipna=True).round(2)
+                ################## CALCULATE TERM AVERAGE ##################
 
-            # Round 'MBA Average' to integers for specific 'Code' values
-            codes_to_round = ['Total_Size', 'Strong', 'Weak']
-            database_df.loc[database_df['Code'].isin(codes_to_round), 'MBA Average'] = (
-                database_df.loc[database_df['Code'].isin(codes_to_round), 'MBA Average'].round(0).astype(int)
-            )
+                numeric_df = df.apply(pd.to_numeric, errors='coerce')
+                term_average_dict = numeric_df.drop(columns=demographic_columns, errors='ignore').mean().round(2).to_dict()
+                term_average_dict['Weak'] =  round(term_average_dict['Weak'])
+                term_average_dict['Strong'] =  round(term_average_dict['Strong'])
+                term_average_dict['Total_Size'] =  round(term_average_dict['Total_Size'])
+                term_average_dict['PS'] =  round((term_average_dict['NA1'] + term_average_dict['II'] + term_average_dict['SA'] + term_average_dict['AS'])/4, 2)
+                term_average_dict['EmpL'] =  round((term_average_dict['LBE'] + term_average_dict['PDM'] + term_average_dict['COACH'] + term_average_dict['INF'] + term_average_dict['ShowCon'])/5, 2)
+                term_average_dict['PE'] =  round((term_average_dict['MEAN'] + term_average_dict['COMP'] + term_average_dict['SD'] + term_average_dict['IMP'])/4, 2)
 
-            try:
-                with pd.ExcelWriter(data_dict_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
-                    database_df.to_excel(writer, sheet_name='Database', index=False)
-                    print("Database updated.")
-            except PermissionError as e:
-                messagebox.showerror("Permission Error", f"{e}\nClose the Database file before running this script.")
-                return
+                ################## LOAD AND UPDATE DB ##################
+
+                # Recalculate the 'MBA Average' column, now including new term
+                column_titles = database_df.columns.tolist()
+                columns_to_remove = ['Sub-Categories', 'Code', 'MBA Average']
+                terms = [col for col in column_titles if col not in columns_to_remove]
+
+                if new_term in terms:
+                    ans = messagebox.askyesno("Overwrite Term", f"Term '{new_term}' already exists. Do you want to overwrite with new data and update MBA average?")
+                    if not ans:
+                        return  # Do not proceed
+                    else:
+                        # Overwrite term
+                        database_df[new_term] = database_df['Code'].map(term_average_dict)
+                else:
+                    # Inserting new term
+                    terms.append(new_term)
+                    database_df[new_term] = database_df['Code'].map(term_average_dict)
+
+                database_df['MBA Average'] = database_df[terms].mean(axis=1, skipna=True).round(2)
+
+                # Round 'MBA Average' to integers for specific 'Code' values
+                codes_to_round = ['Total_Size', 'Strong', 'Weak']
+                database_df.loc[database_df['Code'].isin(codes_to_round), 'MBA Average'] = (
+                    database_df.loc[database_df['Code'].isin(codes_to_round), 'MBA Average'].round(0).astype(int)
+                )
+
+                try:
+                    with pd.ExcelWriter(data_dict_path, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+                        database_df.to_excel(writer, sheet_name='Database', index=False)
+                        print("Database updated.")
+                except PermissionError as e:
+                    messagebox.showerror("Permission Error", f"{e}\nClose the Database file before running this script.")
+                    return
 
             ################## LOAD MBA AVERAGE FROM UPDATED DB AND SAVE TO DF ##################
 
@@ -236,7 +248,7 @@ class MBAReportApp(ctk.CTk):
 
             ################## CALCULATE STANDARD DEVIATION ##################
 
-            demographic_columns = ['Name', 'MBA program', 'Email', 'Academic years', 'Academic term', 
+            demographic_columns = ['Name', 'Email', 'Academic years', 'Academic term', 
                                'DOB', 'Gender', 'Profession', 'Work Ex. years']
             strength_columns = ['Strong', 'Weak']
             breadth_columns = ['High_Lvl', 'Ext', 'Cross_Func']
