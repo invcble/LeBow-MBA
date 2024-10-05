@@ -263,12 +263,18 @@ class MBAReportApp(ctk.CTk):
                 if mba_avg_col in df.columns:
                     df[f'{col}_SD'] = ((df[col] - df[mba_avg_col]) ** 2).mean() ** 0.5
 
-            ################## SORT MAIN DF ##################
+            ################## SORT MAIN DF AND ADD SAMPLE REPORT ##################
 
             remaining_columns = sorted([col for col in df.columns if col not in demographic_columns])
             sorted_columns = demographic_columns + remaining_columns
 
             df = df[sorted_columns]
+
+            random_row = df.sample(n=1).copy()
+            random_row['Name'] = 'SAMPLE REPORT'
+            random_row['Email'] = None
+            random_row['DOB'] = None
+            df = pd.concat([df, random_row], ignore_index=True)
 
             with pd.ExcelWriter(f"{new_term}_dataframe.xlsx", engine='openpyxl') as writer:
                 df.to_excel(writer, index=False)
