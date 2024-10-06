@@ -3,6 +3,12 @@ import pandas as pd
 import os
 import warnings
 from tkinter import messagebox
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+from datetime import datetime
 
 pd.set_option('future.no_silent_downcasting', True)
 warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
@@ -17,7 +23,11 @@ class MBAReportApp(ctk.CTk):
 
         # Window configuration
         self.title("MBA Report Generator")
-        self.geometry("600x450")
+        self.geometry("600x740")
+
+        # Title box
+        self.title_label = ctk.CTkLabel(self, text="MBA Report Generator", font=ctk.CTkFont(size=24, weight="bold"))
+        self.title_label.pack(pady=20)
 
         # File path inputs
         self.file_path_label = ctk.CTkLabel(self, text="Survey Data File (.xlsx) Path:")
@@ -41,13 +51,120 @@ class MBAReportApp(ctk.CTk):
         self.term_entry = ctk.CTkEntry(self, width=500)
         self.term_entry.pack()
 
-        # Submit button
+        # Late tick
         self.check_box = ctk.CTkCheckBox(self, text="Late Submission Mode (Doesn't update Term & MBA Average)")
         self.check_box.pack(pady=20)
 
         # Submit button
         self.submit_button = ctk.CTkButton(self, text="Generate Report", command=self.generate_report)
         self.submit_button.pack(pady=20)
+
+        # Scorelist file path input
+        self.scorelist_label = ctk.CTkLabel(self, text="Scorelist File Path (.xlsx):")
+        self.scorelist_label.pack(pady=10)
+        self.scorelist_entry = ctk.CTkEntry(self, width=500)
+        self.scorelist_entry.pack()
+
+        # PDF folder path input
+        self.pdf_folder_label = ctk.CTkLabel(self, text="PDF Folder Path:")
+        self.pdf_folder_label.pack(pady=10)
+        self.pdf_folder_entry = ctk.CTkEntry(self, width=500)
+        self.pdf_folder_entry.pack()
+
+        # Gen report button
+        self.submit_button = ctk.CTkButton(self, text="Send Emails", command=self.send_emails)
+        self.submit_button.pack(pady=20)
+
+    def send_emails(self):
+        scorelist_file = self.scorelist_entry.get().replace('"','')
+        pdf_folder = self.pdf_folder_entry.get().replace('"','')
+
+        # Validate inputs
+        if not all([scorelist_file, pdf_folder]):
+            messagebox.showerror("Input Error", "All fields must be filled in.")
+            return
+
+        # Check if input paths are valid
+        if not os.path.exists(scorelist_file) or not os.path.isdir(pdf_folder):
+            messagebox.showerror("Error", "Invalid file path or folder path.")
+            return
+        
+        if not scorelist_file.endswith('.xlsx'):
+            messagebox.showerror("Format Error", "Score List file must have .xlsx format.")
+            return
+
+        try:
+            dataframe = pd.read_excel(scorelist_file)
+            for index, row in dataframe.iterrows():
+                name = row['Name']
+                email = row['Email']
+
+                if name != 'SAMPLE REPORT':
+                    pdf_path = os.path.join(pdf_folder, f"Workbook {name}.pdf")
+
+                    if os.path.exists(pdf_path):
+                        self.send_email_with_attachment(email, pdf_path)
+                    else:
+                        print(f"PDF for {name} not found at {pdf_path}")
+                        messagebox.showwarning("Missing PDF", f"PDF for {name} not found.")
+            
+            messagebox.showinfo("Success", "Emails sent successfully.")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to send emails: {e}")
+
+    def send_email_with_attachment(self, to_email, attachment_path):
+        smtp_server = "smtp.gmail.com"
+        smtp_port = 465
+        from_email = "noreply.leadership.report@gmail.com"
+        password = ""  # Use your app password here
+
+        sender_display_name = "LeBow Leadership Report"
+        subject = "Your Personalized Leadership Development Report - ORGB 511"
+        body = """Dear Student,
+
+We hope you're doing well. As part of your ORGB 511 course, you completed the LeBow Leadership Development Survey.
+
+Attached is your personalized feedback report, providing insights into your leadership style and characteristics. This report is essential for your course development and will be used in group discussions, reflections, and assignments. Please review it carefully to support your learning and leadership growth throughout the quarter.
+
+If you have any questions, feel free to contact your course coordinator.
+
+Best regards,
+LeBow Leadership Development Team
+LeBow College of Business
+Drexel University"""
+
+        msg = MIMEMultipart()
+        msg['From'] = f"{sender_display_name} <{from_email}>"
+        msg['To'] = to_email
+        msg['Subject'] = subject
+        msg['X-Priority'] = '1'  # High Priority
+        msg['X-MSMail-Priority'] = 'High'
+        msg['Importance'] = 'High'
+
+        msg.attach(MIMEText(body, 'plain'))
+
+        filename = os.path.basename(attachment_path)
+        try:
+            with open(attachment_path, "rb") as attachment:
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(attachment.read())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', f'attachment; filename= {filename}')
+                msg.attach(part)
+        except Exception as e:
+            print(f"Error attaching file: {e}")
+            return
+
+        try:
+            server = smtplib.SMTP_SSL(smtp_server, smtp_port)
+            server.login(from_email, password)
+            server.sendmail(from_email, to_email, msg.as_string())
+            print(f"Email to {to_email} was sent successfully!")
+        except Exception as e:
+            print(f"Error sending email: {e}")
+        finally:
+            if 'server' in locals():
+                server.quit()
 
     def merge_columns_with_suffix(self, df):
         grouped_columns = {}
@@ -276,7 +393,8 @@ class MBAReportApp(ctk.CTk):
             random_row['DOB'] = None
             df = pd.concat([df, random_row], ignore_index=True)
 
-            with pd.ExcelWriter(f"{new_term}_dataframe.xlsx", engine='openpyxl') as writer:
+            current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            with pd.ExcelWriter(f"ScoreList__{new_term}__{current_time}.xlsx", engine='openpyxl') as writer:
                 df.to_excel(writer, index=False)
 
             ################## GENERATE REPORTS ##################

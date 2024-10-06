@@ -31,6 +31,9 @@ Drexel University"""
     msg['From'] = f"{sender_display_name} <{from_email}>"
     msg['To'] = to_email
     msg['Subject'] = subject
+    msg['X-Priority'] = '1'  # High Priority
+    msg['X-MSMail-Priority'] = 'High'
+    msg['Importance'] = 'High'
 
     msg.attach(MIMEText(body, 'plain'))
 
