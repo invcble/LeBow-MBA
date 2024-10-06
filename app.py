@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import pandas as pd
-import os
+import os, time
 import warnings
 from tkinter import messagebox
 import smtplib
@@ -96,6 +96,7 @@ class MBAReportApp(ctk.CTk):
         try:
             dataframe = pd.read_excel(scorelist_file)
             for index, row in dataframe.iterrows():
+                time.sleep(20)
                 name = row['Name']
                 email = row['Email']
 
@@ -103,7 +104,7 @@ class MBAReportApp(ctk.CTk):
                     pdf_path = os.path.join(pdf_folder, f"Workbook {name}.pdf")
 
                     if os.path.exists(pdf_path):
-                        self.send_email_with_attachment(email, pdf_path)
+                        self.send_email_with_attachment(email, pdf_path, name)
                     else:
                         print(f"PDF for {name} not found at {pdf_path}")
                         messagebox.showwarning("Missing PDF", f"PDF for {name} not found.")
@@ -112,7 +113,7 @@ class MBAReportApp(ctk.CTk):
         except Exception as e:
             messagebox.showerror("Error", f"Failed to send emails: {e}")
 
-    def send_email_with_attachment(self, to_email, attachment_path):
+    def send_email_with_attachment(self, to_email, attachment_path, name):
         smtp_server = "smtp.gmail.com"
         smtp_port = 465
         from_email = "noreply.leadership.report@gmail.com"
@@ -120,7 +121,7 @@ class MBAReportApp(ctk.CTk):
 
         sender_display_name = "LeBow Leadership Report"
         subject = "Your Personalized Leadership Development Report - ORGB 511"
-        body = """Dear Student,
+        body = f"""Dear {name},
 
 We hope you're doing well. As part of your ORGB 511 course, you completed the LeBow Leadership Development Survey.
 
